@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المستشار القانوني المغربي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --dark: #0a0a0f;
+    --dark-2: #111118;
+    --dark-3: #1a1a24;
+    --dark-4: #22222f;
+    --text: #e8e4d9;
+    --text-dim: #9990a8;
+    --border: rgba(201,168,76,0.2);
+    --shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Geometric pattern overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(201,168,76,0.015) 40px,
+      rgba(201,168,76,0.015) 41px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  header {
+    padding: 24px 0 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+
+  .logo-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+  }
+
+  h1 {
+    font-family: 'Amiri', serif;
+    font-size: 26px;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Chat area */
+  .chat-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 0;
+    scroll-behavior: smooth;
+  }
+
+  .chat-wrapper::-webkit-scrollbar { width: 4px; }
+  .chat-wrapper::-webkit-scrollbar-track { background: transparent; }
+  .chat-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Welcome */
+  .welcome {
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeUp 0.8s ease;
+  }
+
+  .welcome-icon {
+    font-size: 56px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 16px rgba(201,168,76,0.4));
+  }
+
+  .welcome h2 {
+    font-family: 'Amiri', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+  }
+
+  .welcome p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.8;
+    max-width: 500px;
+    margin: 0 auto 28px;
+  }
+
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .suggestion-btn {
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .suggestion-btn:hover {
+    background: var(--dark-4);
+    border-color: var(--gold);
+    color: var(--gold-light);
+    transform: translateY(-2px);
+  }
+
+  /* Messages */
+  .message {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .message.user {
+    flex-direction: row-reverse;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .message.bot .avatar {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  }
+
+  .message.user .avatar {
+    background: var(--dark-4);
+    border: 1px solid var(--border);
+  }
+
+  .bubble {
+    max-width: 75%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    line-height: 1.8;
+    font-size: 14px;
+  }
+
+  .message.bot .bubble {
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    border-top-right-radius: 4px;
+  }
+
+  .message.user .bubble {
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08));
+    border: 1px solid rgba(201,168,76,0.3);
+    border-top-left-radius: 4px;
+    text-align: right;
+  }
+
+  .source-tag {
+    display: inline-block;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold-light);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 10px;
+  }
+
+  /* Typing indicator */
+  .typing {
+    display: flex;
+    gap: 5px;
+    padding: 14px 18px;
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    border-top-right-radius: 4px;
+    width: fit-content;
+  }
+
+  .typing span {
+    width: 7px;
+    height: 7px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-8px); opacity: 1; }
+  }
+
+  /* Input area */
+  .input-area {
+    padding: 16px 0 24px;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .input-box {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 12px 16px;
+    transition: border-color 0.2s;
+  }
+
+  .input-box:focus-within {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
+  }
+
+  textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: none;
+    max-height: 120px;
+    text-align: right;
+  }
+
+  textarea::placeholder { color: var(--text-dim); }
+
+  .send-btn {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    color: var(--dark);
+    font-size: 18px;
+  }
+
+  .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(201,168,76,0.4); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 10px;
+    opacity: 0.7;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Error */
+  .error-bubble {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #fca5a5;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.4s ease;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo-area">
+      <div class="logo-icon">⚖️</div>
+      <h1>المستشار القانوني المغربي</h1>
+    </div>
+    <div class="subtitle">القوانين والتشريعات المغربية</div>
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      <span>متصل ومتاح للإجابة</span>
+    </div>
+  </header>
+
+  <div class="chat-wrapper" id="chatWrapper">
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">📚</div>
+      <h2>مرحباً بك في المستشار القانوني</h2>
+      <p>يمكنني مساعدتك في الاستفسار عن القوانين المغربية من مصادرها الرسمية. اطرح سؤالك القانوني وسأجيبك بدقة.</p>
+      <div class="suggestions">
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">ما هي آجال الطعن بالاستئناف؟</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">شروط تأسيس الشركة في المغرب</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">حقوق العامل عند الفصل التعسفي</button>
+        <button class="suggestion-btn" onclick="sendSuggestion(this)">إجراءات رفع دعوى مدنية</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-box">
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+      <textarea 
+        id="userInput" 
+        placeholder="اكتب سؤالك القانوني هنا..."
+        rows="1"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+    </div>
+    <div class="disclaimer">⚠️ هذا المستشار للاسترشاد فقط ولا يُغني عن استشارة محامٍ متخصص</div>
+  </div>
+
+</div>
+
+<script>
+  const RAILWAY_URL = 'https://anythingllm-production-fd40.up.railway.app';
+  const API_KEY = 'YOUR_API_KEY_HERE'; // ضع API Key هنا
+  const WORKSPACE = 'mstchar-qanwny';
+
+  let isLoading = false;
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function sendSuggestion(btn) {
+    document.getElementById('userInput').value = btn.textContent;
+    sendMessage();
+  }
+
+  function addMessage(text, type) {
+    const welcome = document.getElementById('welcome');
+    if (welcome) welcome.remove();
+
+    const wrapper = document.getElementById('chatWrapper');
+    const div = document.createElement('div');
+    div.className = `message ${type}`;
+
+    const avatar = type === 'bot' ? '⚖️' : '👤';
+    div.innerHTML = `
+      <div class="avatar">${avatar}</div>
+      <div class="bubble">${text}</div>
+    `;
+    wrapper.appendChild(div);
+    wrapper.scrollTop = wrapper.scrollHeight;
+    return div;
+  }
+
+  function showTyping() {
+    const welcome = document.getElementById('welcome');
+    if (welcome) welcome.remove();
+
+    const wrapper = document.getElementById('chatWrapper');
+    const div = document.createElement('div');
+    div.className = 'message bot';
+    div.id = 'typing';
+    div.innerHTML = `
+      <div class="avatar">⚖️</div>
+      <div class="typing"><span></span><span></span><span></span></div>
+    `;
+    wrapper.appendChild(div);
+    wrapper.scrollTop = wrapper.scrollHeight;
+  }
+
+  function removeTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+  }
+
+  async function sendMessage() {
+    if (isLoading) return;
+    const input = document.getElementById('userInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+    isLoading = true;
+    document.getElementById('sendBtn').disabled = true;
+
+    addMessage(text, 'user');
+    showTyping();
+
+    try {
+      const res = await fetch(`${RAILWAY_URL}/api/v1/workspace/${WORKSPACE}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+          message: text,
+          mode: 'query'
+        })
+      });
+
+      const data = await res.json();
+      removeTyping();
+
+      if (data.textResponse) {
+        const sources = data.sources?.length > 0 
+          ? `<br><span class="source-tag">📄 المصدر: ${data.sources[0].title || 'الوثائق القانونية'}</span>`
+          : '';
+        addMessage(data.textResponse + sources, 'bot');
+      } else {
+        addMessage('عذراً، لم أتمكن من الإجابة. يرجى المحاولة مرة أخرى.', 'bot');
+      }
+    } catch (err) {
+      removeTyping();
+      const wrapper = document.getElementById('chatWrapper');
+      const errDiv = document.createElement('div');
+      errDiv.className = 'error-bubble';
+      errDiv.textContent = '⚠️ تعذر الاتصال بالخادم. يرجى التحقق من الاتصال والمحاولة مرة أخرى.';
+      wrapper.appendChild(errDiv);
+      wrapper.scrollTop = wrapper.scrollHeight;
+    }
+
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('userInput').focus();
+  }
+</script>
+</body>
+</html>
