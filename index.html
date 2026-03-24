@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -425,8 +424,8 @@
 
 <script>
   const RAILWAY_URL = 'https://anythingllm-production-fd40.up.railway.app';
-  const API_KEY = 'CX9J4AD-3JKM43Y-HWG36BS-RMDNJ9H'; // ضع API Key هنا
-  const WORKSPACE = 'mstchar-qanwny';
+  const API_KEY = 'AYZ7S4H-HY24AK7-HCBA4MJ-PCWNN84'; // xxxx API Key xxxx // سيتم استبداله
+  const WORKSPACE = 'mon-espace-de-travail';
 
   let isLoading = false;
 
@@ -503,13 +502,15 @@
     try {
       const res = await fetch(`${RAILWAY_URL}/api/v1/workspace/${WORKSPACE}/chat`, {
         method: 'POST',
+        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`
+          'Authorization': `Bearer ${API_KEY}`,
+          'Origin': 'https://bahiayoub12-bot.github.io'
         },
         body: JSON.stringify({
           message: text,
-          mode: 'query'
+          mode: 'chat'
         })
       });
 
