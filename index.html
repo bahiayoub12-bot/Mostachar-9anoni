@@ -16,429 +16,280 @@
     --text: #e8e4d9;
     --text-dim: #9990a8;
     --border: rgba(201,168,76,0.2);
-    --shadow: 0 8px 32px rgba(0,0,0,0.6);
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--dark); color: var(--text); font-family: 'Cairo', sans-serif; min-height: 100vh; display: flex; overflow: hidden; }
 
-  body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'Cairo', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  /* SIDEBAR */
+  .sidebar { width: 260px; background: var(--dark-2); border-left: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+  .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .sidebar-title { font-size: 13px; color: var(--gold-light); font-weight: 600; }
+  .new-chat-btn { background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 8px; color: var(--dark); padding: 6px 12px; font-size: 12px; font-family: 'Cairo', sans-serif; cursor: pointer; font-weight: 600; }
+  .chat-list { flex: 1; overflow-y: auto; padding: 8px; }
+  .chat-list::-webkit-scrollbar { width: 3px; }
+  .chat-list::-webkit-scrollbar-thumb { background: var(--border); }
+  .chat-item { padding: 10px 12px; border-radius: 10px; cursor: pointer; margin-bottom: 4px; transition: background 0.2s; display: flex; align-items: center; gap: 8px; }
+  .chat-item:hover { background: var(--dark-3); }
+  .chat-item.active { background: var(--dark-3); border: 1px solid var(--border); }
+  .chat-item-title { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+  .chat-item-date { font-size: 10px; color: var(--text-dim); flex-shrink: 0; }
+  .delete-chat { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; opacity: 0; flex-shrink: 0; }
+  .chat-item:hover .delete-chat { opacity: 1; }
+  .empty-history { text-align: center; padding: 40px 16px; color: var(--text-dim); font-size: 13px; line-height: 2; }
 
-  /* Background pattern */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: 
-      radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.04) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.03) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  /* MAIN */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  header { padding: 14px 20px; text-align: center; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 12px; position: relative; }
+  .menu-btn { position: absolute; right: 16px; background: none; border: none; color: var(--text-dim); font-size: 20px; cursor: pointer; display: none; }
+  .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .header-text h1 { font-family: 'Amiri', serif; font-size: 19px; color: var(--gold-light); }
+  .status-bar { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-  /* Geometric pattern overlay */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 40px,
-      rgba(201,168,76,0.015) 40px,
-      rgba(201,168,76,0.015) 41px
-    );
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .container {
-    position: relative;
-    z-index: 1;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 16px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Header */
-  header {
-    padding: 24px 0 16px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-
-  .logo-area {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-bottom: 8px;
-  }
-
-  .logo-icon {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 20px rgba(201,168,76,0.3);
-  }
-
-  h1 {
-    font-family: 'Amiri', serif;
-    font-size: 26px;
-    color: var(--gold-light);
-    letter-spacing: 1px;
-  }
-
-  .subtitle {
-    font-size: 12px;
-    color: var(--text-dim);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  .status-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 10px;
-    font-size: 12px;
-    color: var(--text-dim);
-  }
-
-  .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 8px #4ade80;
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* Chat area */
-  .chat-wrapper {
-    flex: 1;
-    overflow-y: auto;
-    padding: 24px 0;
-    scroll-behavior: smooth;
-  }
-
+  /* CHAT */
+  .chat-wrapper { flex: 1; overflow-y: auto; padding: 20px; scroll-behavior: smooth; }
   .chat-wrapper::-webkit-scrollbar { width: 4px; }
-  .chat-wrapper::-webkit-scrollbar-track { background: transparent; }
   .chat-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  /* Welcome */
-  .welcome {
-    text-align: center;
-    padding: 40px 20px;
-    animation: fadeUp 0.8s ease;
-  }
-
-  .welcome-icon {
-    font-size: 56px;
-    margin-bottom: 16px;
-    filter: drop-shadow(0 4px 16px rgba(201,168,76,0.4));
-  }
-
-  .welcome h2 {
-    font-family: 'Amiri', serif;
-    font-size: 22px;
-    color: var(--gold-light);
-    margin-bottom: 10px;
-  }
-
-  .welcome p {
-    font-size: 14px;
-    color: var(--text-dim);
-    line-height: 1.8;
-    max-width: 500px;
-    margin: 0 auto 28px;
-  }
-
-  .suggestions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-  }
-
-  .suggestion-btn {
-    background: var(--dark-3);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 10px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-family: 'Cairo', sans-serif;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .suggestion-btn:hover {
-    background: var(--dark-4);
-    border-color: var(--gold);
-    color: var(--gold-light);
-    transform: translateY(-2px);
-  }
-
-  /* Messages */
-  .message {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-    animation: fadeUp 0.4s ease;
-  }
-
-  .message.user {
-    flex-direction: row-reverse;
-  }
-
-  .avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    flex-shrink: 0;
-  }
-
-  .message.bot .avatar {
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  }
-
-  .message.user .avatar {
-    background: var(--dark-4);
-    border: 1px solid var(--border);
-  }
-
-  .bubble {
-    max-width: 75%;
-    padding: 14px 18px;
-    border-radius: 16px;
-    line-height: 1.8;
-    font-size: 14px;
-  }
-
-  .message.bot .bubble {
-    background: var(--dark-3);
-    border: 1px solid var(--border);
-    border-top-right-radius: 4px;
-  }
-
-  .message.user .bubble {
-    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08));
-    border: 1px solid rgba(201,168,76,0.3);
-    border-top-left-radius: 4px;
-    text-align: right;
-  }
-
-  .source-tag {
-    display: inline-block;
-    background: rgba(201,168,76,0.1);
-    border: 1px solid rgba(201,168,76,0.3);
-    color: var(--gold-light);
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    margin-top: 10px;
-  }
-
-  /* Typing indicator */
-  .typing {
-    display: flex;
-    gap: 5px;
-    padding: 14px 18px;
-    background: var(--dark-3);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    border-top-right-radius: 4px;
-    width: fit-content;
-  }
-
-  .typing span {
-    width: 7px;
-    height: 7px;
-    background: var(--gold);
-    border-radius: 50%;
-    animation: bounce 1.2s infinite;
-  }
-
+  .welcome { text-align: center; padding: 40px 20px; animation: fadeUp 0.8s ease; }
+  .welcome-icon { font-size: 50px; margin-bottom: 14px; }
+  .welcome h2 { font-family: 'Amiri', serif; font-size: 20px; color: var(--gold-light); margin-bottom: 8px; }
+  .welcome p { font-size: 13px; color: var(--text-dim); line-height: 1.8; max-width: 480px; margin: 0 auto 22px; }
+  .suggestions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .suggestion-btn { background: var(--dark-3); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 20px; font-size: 12px; font-family: 'Cairo', sans-serif; cursor: pointer; transition: all 0.2s; }
+  .suggestion-btn:hover { border-color: var(--gold); color: var(--gold-light); transform: translateY(-2px); }
+  .message { display: flex; gap: 10px; margin-bottom: 16px; animation: fadeUp 0.4s ease; }
+  .message.user { flex-direction: row-reverse; }
+  .avatar { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+  .message.bot .avatar { background: linear-gradient(135deg, var(--gold), var(--gold-light)); }
+  .message.user .avatar { background: var(--dark-4); border: 1px solid var(--border); }
+  .bubble { max-width: 72%; padding: 12px 16px; border-radius: 14px; line-height: 1.8; font-size: 13px; }
+  .message.bot .bubble { background: var(--dark-3); border: 1px solid var(--border); border-top-right-radius: 4px; }
+  .message.user .bubble { background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08)); border: 1px solid rgba(201,168,76,0.3); border-top-left-radius: 4px; }
+  .attached-file { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,168,76,0.1); border: 1px solid var(--border); border-radius: 8px; padding: 4px 10px; font-size: 11px; color: var(--gold-light); margin-bottom: 6px; }
+  .source-tag { display: inline-block; background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); color: var(--gold-light); font-size: 11px; padding: 3px 10px; border-radius: 20px; margin-top: 8px; }
+  .typing { display: flex; gap: 4px; padding: 12px 16px; background: var(--dark-3); border: 1px solid var(--border); border-radius: 14px; width: fit-content; }
+  .typing span { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: bounce 1.2s infinite; }
   .typing span:nth-child(2) { animation-delay: 0.2s; }
   .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-7px); opacity: 1; } }
 
-  @keyframes bounce {
-    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-    30% { transform: translateY(-8px); opacity: 1; }
-  }
-
-  /* Input area */
-  .input-area {
-    padding: 16px 0 24px;
-    flex-shrink: 0;
-    border-top: 1px solid var(--border);
-  }
-
-  .input-box {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    background: var(--dark-3);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 12px 16px;
-    transition: border-color 0.2s;
-  }
-
-  .input-box:focus-within {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.08);
-  }
-
-  textarea {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-family: 'Cairo', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    resize: none;
-    max-height: 120px;
-    text-align: right;
-  }
-
+  /* INPUT */
+  .input-area { padding: 10px 20px 18px; flex-shrink: 0; border-top: 1px solid var(--border); }
+  .file-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .file-chip { display: flex; align-items: center; gap: 6px; background: var(--dark-3); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; font-size: 12px; }
+  .file-chip button { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 14px; }
+  .input-box { display: flex; gap: 8px; align-items: flex-end; background: var(--dark-3); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px; transition: border-color 0.2s; }
+  .input-box:focus-within { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.06); }
+  .attach-wrap { position: relative; }
+  .attach-btn { width: 34px; height: 34px; background: var(--dark-4); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; transition: all 0.2s; color: var(--text); font-weight: bold; }
+  .attach-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+  .attach-menu { position: absolute; bottom: 44px; right: 0; background: var(--dark-3); border: 1px solid var(--border); border-radius: 12px; padding: 6px; min-width: 160px; display: none; z-index: 100; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+  .attach-menu.open { display: block; }
+  .attach-option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: background 0.2s; }
+  .attach-option:hover { background: var(--dark-4); }
+  textarea { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'Cairo', sans-serif; font-size: 13px; line-height: 1.6; resize: none; max-height: 100px; text-align: right; }
   textarea::placeholder { color: var(--text-dim); }
-
-  .send-btn {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.2s;
-    color: var(--dark);
-    font-size: 18px;
-  }
-
-  .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(201,168,76,0.4); }
+  .send-btn { width: 36px; height: 36px; background: linear-gradient(135deg, var(--gold), var(--gold-light)); border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; color: var(--dark); font-size: 16px; font-weight: bold; }
+  .send-btn:hover { transform: scale(1.05); }
   .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .disclaimer { text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 8px; opacity: 0.6; }
+  .error-bubble { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; padding: 10px 14px; border-radius: 10px; font-size: 12px; margin-bottom: 14px; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-  .disclaimer {
-    text-align: center;
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-top: 10px;
-    opacity: 0.7;
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Error */
-  .error-bubble {
-    background: rgba(239,68,68,0.1);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: #fca5a5;
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 13px;
-    margin-bottom: 16px;
-    animation: fadeUp 0.4s ease;
+  @media (max-width: 640px) {
+    .sidebar { position: fixed; top: 0; right: 0; height: 100vh; z-index: 200; transform: translateX(100%); transition: transform 0.3s; }
+    .sidebar.open { transform: translateX(0); }
+    .menu-btn { display: block; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 199; }
+    .overlay.open { display: block; }
   }
 </style>
 </head>
 <body>
-<div class="container">
 
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="sidebar-title">📋 سجل المحادثات</span>
+    <button class="new-chat-btn" onclick="newChat()">+ جديد</button>
+  </div>
+  <div class="chat-list" id="chatList"></div>
+</div>
+
+<div class="main">
   <header>
-    <div class="logo-area">
-      <div class="logo-icon">⚖️</div>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <div class="logo-icon">⚖️</div>
+    <div class="header-text">
       <h1>المستشار القانوني المغربي</h1>
-    </div>
-    <div class="subtitle">القوانين والتشريعات المغربية</div>
-    <div class="status-bar">
-      <div class="status-dot"></div>
-      <span>متصل ومتاح للإجابة</span>
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        <span>متصل ومتاح للإجابة</span>
+      </div>
     </div>
   </header>
 
-  <div class="chat-wrapper" id="chatWrapper">
-    <div class="welcome" id="welcome">
-      <div class="welcome-icon">📚</div>
-      <h2>مرحباً بك في المستشار القانوني</h2>
-      <p>يمكنني مساعدتك في الاستفسار عن القوانين المغربية من مصادرها الرسمية. اطرح سؤالك القانوني وسأجيبك بدقة.</p>
-      <div class="suggestions">
-        <button class="suggestion-btn" onclick="sendSuggestion(this)">ما هي آجال الطعن بالاستئناف؟</button>
-        <button class="suggestion-btn" onclick="sendSuggestion(this)">شروط تأسيس الشركة في المغرب</button>
-        <button class="suggestion-btn" onclick="sendSuggestion(this)">حقوق العامل عند الفصل التعسفي</button>
-        <button class="suggestion-btn" onclick="sendSuggestion(this)">إجراءات رفع دعوى مدنية</button>
-      </div>
-    </div>
-  </div>
+  <div class="chat-wrapper" id="chatWrapper"></div>
 
   <div class="input-area">
+    <div class="file-preview" id="filePreview"></div>
     <div class="input-box">
+      <div class="attach-wrap">
+        <button class="attach-btn" id="attachBtn" onclick="toggleAttachMenu()">+</button>
+        <div class="attach-menu" id="attachMenu">
+          <div class="attach-option" onclick="triggerFile('pdf')">📄 مستند PDF</div>
+          <div class="attach-option" onclick="triggerFile('image')">🖼️ صورة</div>
+          <div class="attach-option" onclick="triggerFile('any')">📎 أي ملف</div>
+        </div>
+      </div>
+      <textarea id="userInput" placeholder="اكتب سؤالك القانوني هنا..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
       <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
-      <textarea 
-        id="userInput" 
-        placeholder="اكتب سؤالك القانوني هنا..."
-        rows="1"
-        onkeydown="handleKey(event)"
-        oninput="autoResize(this)"
-      ></textarea>
     </div>
-    <div class="disclaimer">⚠️ هذا المستشار للاسترشاد فقط ولا يُغني عن استشارة محامٍ متخصص</div>
+    <div class="disclaimer">⚠️ للاسترشاد فقط ولا يُغني عن استشارة محامٍ متخصص</div>
   </div>
-
 </div>
 
+<input type="file" id="filePdf" accept=".pdf" style="display:none" onchange="addFile(this)">
+<input type="file" id="fileImage" accept="image/*" style="display:none" onchange="addFile(this)">
+<input type="file" id="fileAny" style="display:none" onchange="addFile(this)">
+
 <script>
-  const RAILWAY_URL = 'https://anythingllm-production-fd40.up.railway.app';
-  const API_KEY = 'AYZ7S4H-HY24AK7-HCBA4MJ-PCWNN84'; // xxxx API Key xxxx // سيتم استبداله
-  const WORKSPACE = 'mon-espace-de-travail';
+  const RAILWAY_URL = '/api'; // xxxx Netlify Proxy xxxx
+  const API_KEY = 'AYZ7S4H-HY24AK7-HCBA4MJ-PCWNN84'; // xxxx API Key xxxx
+  const WORKSPACE = 'mon-espace-de-travail'; // xxxx Workspace xxxx
 
   let isLoading = false;
+  let attachedFiles = [];
+  let chats = JSON.parse(localStorage.getItem('legalChats') || '[]');
+  let currentChatId = null;
+  let currentMessages = [];
+
+  // Init
+  showWelcome();
+  renderChatList();
+
+  function showWelcome() {
+    document.getElementById('chatWrapper').innerHTML = `
+      <div class="welcome" id="welcome">
+        <div class="welcome-icon">📚</div>
+        <h2>مرحباً بك في المستشار القانوني</h2>
+        <p>يمكنني مساعدتك في الاستفسار عن القوانين المغربية. اطرح سؤالك أو أرفق مستنداً.</p>
+        <div class="suggestions">
+          <button class="suggestion-btn" onclick="sendSuggestion(this)">ما هي آجال الطعن بالاستئناف؟</button>
+          <button class="suggestion-btn" onclick="sendSuggestion(this)">شروط تأسيس الشركة في المغرب</button>
+          <button class="suggestion-btn" onclick="sendSuggestion(this)">حقوق العامل عند الفصل التعسفي</button>
+          <button class="suggestion-btn" onclick="sendSuggestion(this)">إجراءات رفع دعوى مدنية</button>
+        </div>
+      </div>`;
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  function renderChatList() {
+    const list = document.getElementById('chatList');
+    if (chats.length === 0) {
+      list.innerHTML = '<div class="empty-history">لا توجد محادثات بعد<br>ابدأ بطرح سؤالك القانوني</div>';
+      return;
+    }
+    list.innerHTML = chats.map(c => `
+      <div class="chat-item ${c.id === currentChatId ? 'active' : ''}" onclick="loadChat('${c.id}')">
+        <span class="chat-item-title">${c.title}</span>
+        <span class="chat-item-date">${c.date}</span>
+        <button class="delete-chat" onclick="deleteChat(event,'${c.id}')">🗑</button>
+      </div>`).join('');
+  }
+
+  function newChat() {
+    currentChatId = null;
+    currentMessages = [];
+    showWelcome();
+    renderChatList();
+    closeSidebar();
+  }
+
+  function saveChat(title) {
+    if (!currentChatId) {
+      currentChatId = Date.now().toString();
+      const now = new Date();
+      chats.unshift({ id: currentChatId, title: title.substring(0, 28), date: `${now.getDate()}/${now.getMonth()+1}`, messages: currentMessages });
+    } else {
+      const c = chats.find(c => c.id === currentChatId);
+      if (c) c.messages = [...currentMessages];
+    }
+    localStorage.setItem('legalChats', JSON.stringify(chats));
+    renderChatList();
+  }
+
+  function loadChat(id) {
+    const chat = chats.find(c => c.id === id);
+    if (!chat) return;
+    currentChatId = id;
+    currentMessages = [...(chat.messages || [])];
+    document.getElementById('chatWrapper').innerHTML = '';
+    currentMessages.forEach(m => addMessageToUI(m.text, m.type, false));
+    renderChatList();
+    closeSidebar();
+  }
+
+  function deleteChat(e, id) {
+    e.stopPropagation();
+    chats = chats.filter(c => c.id !== id);
+    localStorage.setItem('legalChats', JSON.stringify(chats));
+    if (currentChatId === id) newChat();
+    else renderChatList();
+  }
+
+  function toggleAttachMenu() {
+    document.getElementById('attachMenu').classList.toggle('open');
+  }
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.attach-wrap')) {
+      document.getElementById('attachMenu').classList.remove('open');
+    }
+  });
+
+  function triggerFile(type) {
+    document.getElementById('attachMenu').classList.remove('open');
+    const map = { pdf: 'filePdf', image: 'fileImage', any: 'fileAny' };
+    document.getElementById(map[type]).click();
+  }
+
+  function addFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    attachedFiles.push(file);
+    const preview = document.getElementById('filePreview');
+    const chip = document.createElement('div');
+    chip.className = 'file-chip';
+    const icon = file.type.includes('image') ? '🖼️' : '📄';
+    chip.innerHTML = `<span>${icon} ${file.name.substring(0,22)}</span><button onclick="removeFile('${file.name}',this)">×</button>`;
+    preview.appendChild(chip);
+    input.value = '';
+  }
+
+  function removeFile(name, btn) {
+    attachedFiles = attachedFiles.filter(f => f.name !== name);
+    btn.parentElement.remove();
+  }
 
   function autoResize(el) {
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    el.style.height = Math.min(el.scrollHeight, 100) + 'px';
   }
 
   function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   }
 
   function sendSuggestion(btn) {
@@ -446,36 +297,26 @@
     sendMessage();
   }
 
-  function addMessage(text, type) {
+  function addMessageToUI(text, type, save = true) {
     const welcome = document.getElementById('welcome');
     if (welcome) welcome.remove();
-
     const wrapper = document.getElementById('chatWrapper');
     const div = document.createElement('div');
     div.className = `message ${type}`;
-
-    const avatar = type === 'bot' ? '⚖️' : '👤';
-    div.innerHTML = `
-      <div class="avatar">${avatar}</div>
-      <div class="bubble">${text}</div>
-    `;
+    div.innerHTML = `<div class="avatar">${type === 'bot' ? '⚖️' : '👤'}</div><div class="bubble">${text}</div>`;
     wrapper.appendChild(div);
     wrapper.scrollTop = wrapper.scrollHeight;
-    return div;
+    if (save) currentMessages.push({ text, type });
   }
 
   function showTyping() {
     const welcome = document.getElementById('welcome');
     if (welcome) welcome.remove();
-
     const wrapper = document.getElementById('chatWrapper');
     const div = document.createElement('div');
     div.className = 'message bot';
     div.id = 'typing';
-    div.innerHTML = `
-      <div class="avatar">⚖️</div>
-      <div class="typing"><span></span><span></span><span></span></div>
-    `;
+    div.innerHTML = `<div class="avatar">⚖️</div><div class="typing"><span></span><span></span><span></span></div>`;
     wrapper.appendChild(div);
     wrapper.scrollTop = wrapper.scrollHeight;
   }
@@ -489,50 +330,54 @@
     if (isLoading) return;
     const input = document.getElementById('userInput');
     const text = input.value.trim();
-    if (!text) return;
+    if (!text && attachedFiles.length === 0) return;
 
     input.value = '';
     input.style.height = 'auto';
+
+    let userBubble = '';
+    if (attachedFiles.length > 0) {
+      userBubble += attachedFiles.map(f => `<div class="attached-file">${f.type.includes('image') ? '🖼️' : '📄'} ${f.name}</div>`).join('');
+    }
+    if (text) userBubble += text;
+
+    addMessageToUI(userBubble, 'user');
+    const chatTitle = text || attachedFiles[0]?.name || 'محادثة قانونية';
+    saveChat(chatTitle);
+
+    attachedFiles = [];
+    document.getElementById('filePreview').innerHTML = '';
+
     isLoading = true;
     document.getElementById('sendBtn').disabled = true;
-
-    addMessage(text, 'user');
     showTyping();
 
     try {
-      const res = await fetch(`${RAILWAY_URL}/api/v1/workspace/${WORKSPACE}/chat`, {
+      const res = await fetch(`${RAILWAY_URL}/v1/workspace/${WORKSPACE}/chat`, {
         method: 'POST',
-        mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`,
-          'Origin': 'https://bahiayoub12-bot.github.io'
+          'Authorization': `Bearer ${API_KEY}`
         },
-        body: JSON.stringify({
-          message: text,
-          mode: 'chat'
-        })
+        body: JSON.stringify({ message: text || 'ما محتوى هذا المستند؟', mode: 'chat' })
       });
 
       const data = await res.json();
       removeTyping();
 
       if (data.textResponse) {
-        const sources = data.sources?.length > 0 
-          ? `<br><span class="source-tag">📄 المصدر: ${data.sources[0].title || 'الوثائق القانونية'}</span>`
-          : '';
-        addMessage(data.textResponse + sources, 'bot');
+        const sources = data.sources?.length > 0 ? `<br><span class="source-tag">📄 ${data.sources[0].title || 'الوثائق القانونية'}</span>` : '';
+        addMessageToUI(data.textResponse + sources, 'bot');
+        saveChat(chatTitle);
       } else {
-        addMessage('عذراً، لم أتمكن من الإجابة. يرجى المحاولة مرة أخرى.', 'bot');
+        addMessageToUI('عذراً، لم أتمكن من الإجابة. يرجى المحاولة مرة أخرى.', 'bot');
       }
     } catch (err) {
       removeTyping();
-      const wrapper = document.getElementById('chatWrapper');
       const errDiv = document.createElement('div');
       errDiv.className = 'error-bubble';
       errDiv.textContent = '⚠️ تعذر الاتصال بالخادم. يرجى التحقق من الاتصال والمحاولة مرة أخرى.';
-      wrapper.appendChild(errDiv);
-      wrapper.scrollTop = wrapper.scrollHeight;
+      document.getElementById('chatWrapper').appendChild(errDiv);
     }
 
     isLoading = false;
